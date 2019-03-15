@@ -12,6 +12,11 @@ d3.select('#app')
 const ul = d3.select('#app')
   .append('ul')
 
+const svg = d3.select('#viz')
+  .append('svg')
+  .attr('width', 600)
+  .attr('height', 300);
+
 function redraw() {
 //select all because we have multiple elements
   let lis = ul.selectAll('li')
@@ -36,12 +41,37 @@ function redraw() {
   lis.text((d, i) => ('Element number is ' + d));
 }
 
+//funzioni di redraw del dell'svg
+function svgRedraw(){
+  let lines = svg.selectAll('line').data(numbers);
+
+  //exit
+  lines.exit().remove();
+
+  //enter
+  lines = lines.enter()
+    .append('line')
+    .attr('stroke-width', 1)
+    .attr('stroke', 'red')
+    .merge(lines);
+
+  //update
+  //change the appearence of the lines.
+  lines
+    .attr('x1', 10)
+    .attr('y1', (d,i) => (10 + i *10) )
+    //coordinate di arrivo nel div della linea
+    .attr('x2', (d,i) => (10 +d) )
+    .attr('y2', (d,i) => (10 + i *10) );
+}
+
 d3.select('#btnAdd')
   .on('click', function () {
     console.log('Add a number');
     const n = Math.floor(Math.random()*100);
     numbers.push(n);
     redraw();
+    svgRedraw();
   });
 
 d3.select('#btnRemove')
@@ -50,6 +80,8 @@ d3.select('#btnRemove')
     //remove the first one element
     numbers = numbers.slice(1);
     redraw();
+    svgRedraw();
   });
 
 redraw();
+svgRedraw();
