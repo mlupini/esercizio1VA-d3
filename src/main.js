@@ -13,6 +13,7 @@ d3.select('#app')
 const ul = d3.select('#app')
   .append('ul')
 
+//select all because we have multiple elements
 let lis = ul.selectAll('li')
   //andiamo a specificare dentro o parametri di data i dati a disposizione
   .data(numbers)
@@ -32,3 +33,16 @@ lis = lis.enter()
 //  return 'Element numbers is ' + d;
 //});
 lis.text((d,i) => ('Element number is '+ d));
+
+
+
+d3.select('#btnAdd')
+  .on('click', function () {
+    console.log('Add a number');
+  });
+
+d3.select('#btnRemove')
+  .on('click', function () {
+    console.log('Remove a number');
+  });
+
