@@ -1,6 +1,6 @@
 const d3 = require('d3');
 
-const numbers = [5,10,15];
+let numbers = [5,10,15];
 
 //selettore di d3
 d3.select('#app')
@@ -23,7 +23,8 @@ function redraw() {
   lis.exit().remove();
 
 //    enter
-  lis = lis.enter()
+  lis = lis
+    .enter()
     .append('li')
     //effettuo il merge con le cose che c'erano prima.
     .merge(lis);
@@ -38,11 +39,17 @@ function redraw() {
 d3.select('#btnAdd')
   .on('click', function () {
     console.log('Add a number');
+    const n = Math.floor(Math.random()*100);
+    numbers.push(n);
+    redraw();
   });
 
 d3.select('#btnRemove')
   .on('click', function () {
     console.log('Remove a number');
+    //remove the first one element
+    numbers = numbers.slice(1);
+    redraw();
   });
 
 redraw();
