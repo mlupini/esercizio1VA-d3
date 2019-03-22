@@ -58,6 +58,7 @@ function svgRedraw(){
   //update
   //change the appearence of the lines.
   lines
+  //SCALES, IN A COMPACT WAY NOT LIKE THIS
     .attr('x1', 10)
     .attr('y1', (d,i) => (10 + i *10) )
     //coordinate di arrivo nel div della linea
