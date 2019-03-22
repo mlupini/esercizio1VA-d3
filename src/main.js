@@ -12,10 +12,10 @@ d3.select('#app')
 const ul = d3.select('#app')
   .append('ul')
 
-const svg = d3.select('#viz')
-  .append('svg')
-  .attr('width', 600)
-  .attr('height', 300);
+//const svg = d3.select('#viz')
+  //.append('svg')
+  //.attr('width', 600)
+  //.attr('height', 300);
 
 function redraw() {
 //select all because we have multiple elements
@@ -102,13 +102,99 @@ function svgRedraw(){
     .text(d => `Number: ${d} `);
 }
 
+//CREATE FIRST MODULE
+function lineChart(){
+
+  //define a scale
+  const xScale = d3.scaleLinear()
+  //dominio della scala, nel nostro caso 0,100 ma questo ci permette di gestire meglio le situazioni
+    .domain([0,10000])
+    //il range dice quanto range va riservato
+    .range([0,200]);
+
+  const yScale = d3.scaleLinear()
+  //10 different numbers mapped into lines
+    .domain([0,19])
+    //altezza del div
+    .range([10,290]);
+
+  //i have numbers in my constructor
+  //let numbers = [];
+
+  //simile al costruttore
+  function me(selection){
+
+    let myData = selection.datum();
+
+    let lines = selection
+      .selectAll('g.line')
+      .data(myData);
+
+    //exit
+    lines.exit().remove();
+
+    //enter
+    let gLines = lines.enter()
+      .append('g')
+      .classed('line', true);
+
+    gLines.append('line')
+      .attr('stroke-width', 1)
+      .attr('stroke', 'red');
+
+    gLines.append('text')
+    //dx tutto il testo è allineato ma si aggiunge un offset
+      .attr('dx', 10)
+      .attr('dy', 5);
+
+    lines = lines.merge(gLines);
+
+
+    //UPDATE
+    lines
+    //.attr('transform', (d,i)=> 'translate(0, '+yScale(i)+')');
+      .attr('transform', (d,i)=> `translate(0, ${yScale(i)})`);
+
+    //change the appearence of the lines.
+    lines.select('line')
+    //SCALES, IN A COMPACT WAY NOT LIKE THIS
+    //.attr('x1', xScale(0))
+    //.attr('y1', (d,i) => yScale(i) )
+    //coordinate di arrivo nel div della linea
+    //usando lo scale, posso modificare in maniera piu semplice la scalata delle variabili andando a toccare il concetto di range nella scalata
+      .attr('x2', (d,i) => xScale(d))
+    //.attr('y2', (d,i) => yScale(i) );
+
+
+    lines.select('text')
+    //.attr('x', d => xScale(d))
+
+      .attr('x', xScale)
+      .text(d => `Number: ${d} `);
+  }
+
+  me.numbers =  function (_numbers) {
+    if(!arguments.length) return numbers;
+    numbers = _numbers;
+    return numbers;
+
+  }
+
+  return me;
+
+}
+
+
 d3.select('#btnAdd')
   .on('click', function () {
     console.log('Add a number');
     const n = Math.floor(Math.random()*10000);
     numbers.push(n);
-    redraw();
-    svgRedraw();
+
+    //passo il nuovo set e chiamo di nuovo il costruttore
+    svg.datum(numbers).call(myLineChart);
+    //redraw();
+    //svgRedraw();
   });
 
 d3.select('#btnRemove')
@@ -116,9 +202,20 @@ d3.select('#btnRemove')
     console.log('Remove a number');
     //remove the first one element
     numbers = numbers.slice(1);
-    redraw();
-    svgRedraw();
+    //passo il nuovo set e chiamo di nuovo il costruttore
+    svg.datum(numbers).call(myLineChart);
+    //redraw();
+    //svgRedraw();
   });
 
-redraw();
-svgRedraw();
+const svg = d3.select('#viz')
+  .append('svg')
+  .attr('width', 600)
+  .attr('height', 300);
+
+const myLineChart = lineChart();
+//myLineChart.numbers([3433,4732,9876]);
+svg.datum(numbers).call(myLineChart);
+
+//redraw();
+//svgRedraw();
