@@ -1,6 +1,6 @@
 const d3 = require('d3');
 
-let numbers = [5,10,15];
+let numbers = [5000,7761,3452];
 
 //selettore di d3
 d3.select('#app')
@@ -45,6 +45,19 @@ function redraw() {
 function svgRedraw(){
   let lines = svg.selectAll('line').data(numbers);
 
+  //define a scale
+  const xScale = d3.scaleLinear()
+  //dominio della scala, nel nostro caso 0,100 ma questo ci permette di gestire meglio le situazioni
+    .domain([0,10000])
+    //il range dice quanto range va riservato
+    .range([10,200]);
+
+  const yScale = d3.scaleLinear()
+    //10 different numbers mapped into lines
+    .domain([0,19])
+    //altezza del div
+    .range([10,290]);
+
   //exit
   lines.exit().remove();
 
@@ -59,17 +72,18 @@ function svgRedraw(){
   //change the appearence of the lines.
   lines
   //SCALES, IN A COMPACT WAY NOT LIKE THIS
-    .attr('x1', 10)
-    .attr('y1', (d,i) => (10 + i *10) )
+    .attr('x1', xScale(0))
+    .attr('y1', (d,i) => yScale(i) )
     //coordinate di arrivo nel div della linea
-    .attr('x2', (d,i) => (10 +d) )
-    .attr('y2', (d,i) => (10 + i *10) );
+    //usando lo scale, posso modificare in maniera piu semplice la scalata delle variabili andando a toccare il concetto di range nella scalata
+    .attr('x2', (d,i) => xScale(d))
+    .attr('y2', (d,i) => yScale(i) );
 }
 
 d3.select('#btnAdd')
   .on('click', function () {
     console.log('Add a number');
-    const n = Math.floor(Math.random()*100);
+    const n = Math.floor(Math.random()*10000);
     numbers.push(n);
     redraw();
     svgRedraw();
